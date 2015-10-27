@@ -1,8 +1,9 @@
 /**
 
 加载器
-现在还不能保证 js 按顺序执行！！！！
+todo: js 并行加载与顺序执行
 2015.10.26 by wushufen
+2015.10.27
 
 @example
 
@@ -135,6 +136,7 @@ wu.Loader = (function() {
             result = {};
 
         function updateProgress() {
+            // console.log('progress:', loaded, error, tatal);
             options.progress && options.progress({
                 loaded: loaded,
                 error: error,
@@ -147,9 +149,13 @@ wu.Loader = (function() {
         for (var i = 0; i < tatal; i++) {
             var item = options.data[i],
                 name = item.name,
-                src = item.src,
+                src = item.src || '',
                 ext = src.substr(src.lastIndexOf('.') + 1),
                 type = item.type || ext;
+            if (!src) {
+                ++loaded;
+                continue;
+            };
             switch (type) {
                 case 'js':
                     js(src, function() {
